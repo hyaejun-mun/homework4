@@ -1,27 +1,36 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct
+{
+    int **matrix;
+    int row;
+    int column;
+} matrix;
+
 int interface();
-void print_matrix(int **M, int row, int column);
+void print_matrix(matrix A);
 int **create_matrix(int row, int column);
-void addition_matrix(int **A, int **B, int **Result, int row, int column);
-void substraction_matrix(int **A, int **B, int **Result, int row, int column);
-void transpose_matrix(int **A, int row, int column);
-void multifly_matrix(int **A, int **B, int **Result, int row, int column);
-void free_matrix(int **A, int **B, int **Result, int row);
+void addition_matrix(matrix A, matrix B);
+void substraction_matrix(matrix A, matrix B);
+void transpose_matrix(matrix A);
+void multifly_matrix(matrix A, matrix B);
+void free_matrix(matrix A, matrix B);
 
 int main()
 {
-    int row, column, run;
-    run = 1;
-    printf("Insert row: ");
-    scanf("%d", &row);
-    printf("Insert column: ");
-    scanf("%d", &column);
-    int **A, **B, **Result;
-    A = create_matrix(row, column);
-    B = create_matrix(row, column);
-    Result = create_matrix(row, column);
+    int run = 1;
+    matrix A, B, Result;
+    printf("Insert A's row: ");
+    scanf("%d", &A.row);
+    printf("Insert A's column: ");
+    scanf("%d", &A.column);
+    printf("Insert B's row: ");
+    scanf("%d", &B.row);
+    printf("Insert B's column: ");
+    scanf("%d", &B.column);
+    A.matrix = create_matrix(A.row, A.column);
+    B.matrix = create_matrix(B.row, B.column);
     while (run)
     {
         int number;
@@ -29,22 +38,22 @@ int main()
         switch (number)
         {
         case 1:
-            printf("A의 상태: \n");
-            print_matrix(A, row, column);
-            printf("B의 상태: \n");
-            print_matrix(B, row, column);
+            printf("Status A: \n");
+            print_matrix(A);
+            printf("Status B: \n");
+            print_matrix(B);
             break;
         case 2:
-            addition_matrix(A, B, Result, row, column);
+            addition_matrix(A, B);
             break;
         case 3:
-            substraction_matrix(A, B, Result, row, column);
+            substraction_matrix(A, B);
             break;
         case 4:
-            transpose_matrix(A, row, column);
+            transpose_matrix(A);
             break;
         case 5:
-            multifly_matrix(A, B, Result, row, column);
+            multifly_matrix(A, B);
             break;
         case 6:
             run = 0;
@@ -54,7 +63,7 @@ int main()
             break;
         }
     }
-    free_matrix(A, B, Result, row);
+    free_matrix(A, B);
 }
 
 int interface()
@@ -72,13 +81,13 @@ int interface()
     return number;
 }
 
-void print_matrix(int **M, int row, int column)
+void print_matrix(matrix A)
 {
     int i, j;
-    for (i = 0; i < row; i++)
+    for (i = 0; i < A.row; i++)
     {
-        for (j = 0; j < column; j++)
-            printf("%4d", M[i][j]);
+        for (j = 0; j < A.column; j++)
+            printf("%4d", A.matrix[i][j]);
         printf("\n");
     }
 }
@@ -95,73 +104,104 @@ int **create_matrix(int row, int column)
     return A;
 }
 
-void addition_matrix(int **A, int **B, int **Result, int row, int column)
+void addition_matrix(matrix A, matrix B)
 {
-    int i, j;
-    printf("A + B = \n");
-    for (i = 0; i < row; i++)
-        for (j = 0; j < column; j++)
-            Result[i][j] = A[i][j] + B[i][j];
-    printf("결과: \n");
-    print_matrix(Result, row, column);
-}
-
-void substraction_matrix(int **A, int **B, int **Result, int row, int column)
-{
-    int i, j;
-    printf("A - B = \n");
-    for (i = 0; i < row; i++)
-        for (j = 0; j < column; j++)
-            Result[i][j] = A[i][j] - B[i][j];
-    printf("결과: \n");
-    print_matrix(Result, row, column);
-}
-
-void transpose_matrix(int **A, int row, int column)
-{
-    int **T, i, j;
-    T = (int *)malloc(column * sizeof(*A));
-    for (i = 0; i < column; i++)
-        T[i] = (int *)malloc(row * sizeof(**A));
-    for (i = 0; i < column; i++)
-        for (j = 0; j < row; j++)
-            T[i][j] = A[j][i];
-    printf("transposed A(T): \n");
-    print_matrix(T, column, row);
-    for (i = 0; i < row; i++)
-        free(T[i]);
-    free(T);
-}
-
-void multifly_matrix(int **A, int **B, int **Result, int row, int column)
-{
-    if (row != column)
+    if (A.row != B.row || A.column != B.column)
     {
-        printf("You can multifly matrix only if row of the first matrix and column of the second matrix are same.\n");
+        printf("You can add only if two matrix's row and column are same.\n");
+        return;
+    }
+    int i, j;
+    matrix Result;
+    Result.matrix = create_matrix(A.column, A.row);
+    Result.row = A.row;
+    Result.column = A.column;
+    printf("A + B = \n");
+    for (i = 0; i < A.row; i++)
+        for (j = 0; j < A.column; j++)
+            Result.matrix[i][j] = A.matrix[i][j] + B.matrix[i][j];
+    printf("result: \n");
+    print_matrix(Result);
+    for (i = 0; i < Result.row; i++)
+        free(Result.matrix[i]);
+    free(Result.matrix);
+}
+
+void substraction_matrix(matrix A, matrix B)
+{
+    if (A.row != B.row || A.column != B.column)
+    {
+        printf("You can add only if two matrix's row and column are same.\n");
+        return;
+    }
+    int i, j;
+    matrix Result;
+    Result.matrix = create_matrix(A.column, A.row);
+    Result.row = A.row;
+    Result.column = A.column;
+    printf("A - B = \n");
+    for (i = 0; i < A.row; i++)
+        for (j = 0; j < A.column; j++)
+            Result.matrix[i][j] = A.matrix[i][j] - B.matrix[i][j];
+    printf("result: \n");
+    print_matrix(Result);
+    for (i = 0; i < Result.row; i++)
+        free(Result.matrix[i]);
+    free(Result.matrix);
+}
+
+void transpose_matrix(matrix A)
+{
+    int i, j;
+    matrix T;
+    T.matrix = create_matrix(A.column, A.row);
+    T.row = A.column;
+    T.column = A.row;
+    for (i = 0; i < A.column; i++)
+        for (j = 0; j < A.row; j++)
+            T.matrix[i][j] = A.matrix[j][i];
+    printf("transposed A(T): \n");
+    print_matrix(T);
+    for (i = 0; i < T.row; i++)
+        free(T.matrix[i]);
+    free(T.matrix);
+}
+
+void multifly_matrix(matrix A, matrix B)
+{
+    if (A.column != B.row)
+    {
+        printf("You can multifly matrix only if column of the first matrix and row of the second matrix are same.\n");
         return;
     }
     int i, j, k;
-    for (i = 0; i < row; i++)
-        for (j = 0; j < column; j++)
-            Result[i][j] = 0;
+    matrix Result;
+    Result.matrix = (int *)malloc(A.row * sizeof(*A.matrix));
+    for (i = 0; i < A.row; i++)
+        Result.matrix[i] = (int *)malloc(B.column * sizeof(**B.matrix));
+    Result.row = A.row;
+    Result.column = B.column;
+    for (i = 0; i < A.row; i++)
+        for (j = 0; j < A.column; j++)
+            Result.matrix[i][j] = 0;
     printf("A * B = \n");
-    for (i = 0; i < row; i++)
-        for (j = 0; j < column; j++)
-            for (k = 0; k < column; k++)
-                Result[i][j] += A[i][k] * B[k][j];
-    print_matrix(Result, row, column);
+    for (i = 0; i < A.row; i++)
+        for (j = 0; j < B.column; j++)
+            for (k = 0; k < A.column; k++)
+                Result.matrix[i][j] += A.matrix[i][k] * B.matrix[k][j];
+    print_matrix(Result);
+    for (i = 0; i < Result.row; i++)
+        free(Result.matrix[i]);
+    free(Result.matrix);
 }
 
-void free_matrix(int **A, int **B, int **Result, int row)
+void free_matrix(matrix A, matrix B)
 {
     int i, j;
-    for (i = 0; i < row; i++)
-    {
-        free(A[i]);
-        free(B[i]);
-        free(Result[i]);
-    }
-    free(A);
-    free(B);
-    free(Result);
+    for (i = 0; i < A.row; i++)
+        free(A.matrix[i]);
+    for (i = 0; i < B.row; i++)
+        free(B.matrix[i]);
+    free(A.matrix);
+    free(B.matrix);
 }
