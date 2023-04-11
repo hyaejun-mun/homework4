@@ -7,10 +7,13 @@ int **create_matrix(int row, int column);
 void addition_matrix(int **A, int **B, int **Result, int row, int column);
 void substraction_matrix(int **A, int **B, int **Result, int row, int column);
 void transpose_matrix(int **A, int row, int column);
+void multifly_matrix(int **A, int **B, int **Result, int row, int column);
 void free_matrix(int **A, int **B, int **Result, int row);
+
 int main()
 {
-    int row, column;
+    int row, column, run;
+    run = 1;
     printf("Insert row: ");
     scanf("%d", &row);
     printf("Insert column: ");
@@ -19,14 +22,16 @@ int main()
     A = create_matrix(row, column);
     B = create_matrix(row, column);
     Result = create_matrix(row, column);
-    while (1)
+    while (run)
     {
         int number;
         number = interface();
         switch (number)
         {
         case 1:
+            printf("A의 상태: \n");
             print_matrix(A, row, column);
+            printf("B의 상태: \n");
             print_matrix(B, row, column);
             break;
         case 2:
@@ -39,12 +44,10 @@ int main()
             transpose_matrix(A, row, column);
             break;
         case 5:
-            print_matrix(Result, row, column);
-
+            multifly_matrix(A, B, Result, row, column);
             break;
         case 6:
-            print_matrix(Result, row, column);
-
+            run = 0;
             break;
         default:
             printf("Not Accurate.\n");
@@ -72,7 +75,6 @@ int interface()
 void print_matrix(int **M, int row, int column)
 {
     int i, j;
-    printf("Status: \n");
     for (i = 0; i < row; i++)
     {
         for (j = 0; j < column; j++)
@@ -100,6 +102,7 @@ void addition_matrix(int **A, int **B, int **Result, int row, int column)
     for (i = 0; i < row; i++)
         for (j = 0; j < column; j++)
             Result[i][j] = A[i][j] + B[i][j];
+    printf("결과: \n");
     print_matrix(Result, row, column);
 }
 
@@ -110,6 +113,7 @@ void substraction_matrix(int **A, int **B, int **Result, int row, int column)
     for (i = 0; i < row; i++)
         for (j = 0; j < column; j++)
             Result[i][j] = A[i][j] - B[i][j];
+    printf("결과: \n");
     print_matrix(Result, row, column);
 }
 
@@ -122,10 +126,30 @@ void transpose_matrix(int **A, int row, int column)
     for (i = 0; i < column; i++)
         for (j = 0; j < row; j++)
             T[i][j] = A[j][i];
+    printf("transposed A(T): \n");
     print_matrix(T, column, row);
     for (i = 0; i < row; i++)
         free(T[i]);
     free(T);
+}
+
+void multifly_matrix(int **A, int **B, int **Result, int row, int column)
+{
+    if (row != column)
+    {
+        printf("You can multifly matrix only if row of the first matrix and column of the second matrix are same.\n");
+        return;
+    }
+    int i, j, k;
+    for (i = 0; i < row; i++)
+        for (j = 0; j < column; j++)
+            Result[i][j] = 0;
+    printf("A * B = \n");
+    for (i = 0; i < row; i++)
+        for (j = 0; j < column; j++)
+            for (k = 0; k < column; k++)
+                Result[i][j] += A[i][k] * B[k][j];
+    print_matrix(Result, row, column);
 }
 
 void free_matrix(int **A, int **B, int **Result, int row)
