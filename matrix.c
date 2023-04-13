@@ -184,7 +184,7 @@ void multifly_matrix(matrix A, matrix B) // 행렬을 곱해주는 함수이다.
     Result.row = A.row;
     Result.column = B.column;
     for (i = 0; i < A.row; i++)
-        for (j = 0; j < A.column; j++) // Result의 모든 원소를 0으로 초기화한다.
+        for (j = 0; j < B.column; j++) // Result의 모든 원소를 0으로 초기화한다.
             Result.matrix[i][j] = 0;
     printf("A * B = \n");
     for (i = 0; i < A.row; i++)            // 행렬의 곱셈의 연산 방식에 따라 연산한다.
